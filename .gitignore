@@ -1,0 +1,128 @@
+# ==============================================================================
+# Git Ignore - Language Models & Agents (LMA) Project
+# ==============================================================================
+
+# --- Python & Bytecode ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- Virtual Environments ---
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+conda/
+.conda/
+
+# --- Secrets & Credentials ---
+.env
+.env.*
+!.env.example
+kaggle.json
+*.pem
+*.key
+*.secret
+credentials.json
+token.json
+
+# --- Jupyter Notebooks & Caches ---
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# --- Datasets & Raw Corpus (Large files) ---
+# Exclude all large JSONL dataset splits and text corpus dumps:
+*.jsonl
+*.jsonl.gz
+data/
+datasets/
+corpus/
+raw_data/
+processed_data/
+hindi_output/
+assamese_output/
+Output/
+output/
+Outputs/
+outputs/
+*output*/
+*Output*/
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.7z
+*.xz
+*.parquet
+*.arrow
+
+# --- Model Checkpoints & Weights ---
+checkpoints/
+saved_models/
+weights/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+*.onnx
+
+# --- Experiment Tracking & Logs ---
+wandb/
+runs/
+tensorboard/
+lightning_logs/
+*.log
+
+# --- IDE & Editor Files ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.directory
+
+# --- OS Specific Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- Project Specific Ignores ---
+LMA_Project_Execution_Plan.md
+AI_USAGE.md
+AI_usage.md
+**/AI_USAGE.md
+**/AI_usage.md
