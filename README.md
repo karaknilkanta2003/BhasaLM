@@ -8,6 +8,8 @@ This repository contains the complete implementation, pipelines, and evaluation 
 
 ---
 
+DataSet-Link -- https://drive.google.com/drive/folders/1xSOCnXsHGA3vjKqUEfuPcypovd9kG1P1?usp=sharing
+
 ## 1. Data Sources & Composition
 
 All training corpora consist of 100% human-authored text (zero synthetic data). Non-language English/Latin words (`[a-zA-Z]+`) are stripped while all numerals (`0-9`, `०-९`, `০-৯`) and punctuation/Dandas (`।`) are strictly preserved.
