@@ -172,7 +172,10 @@ class TransformerLM(nn.Module):
 
         loss = None
         if targets is not None:
-            loss = F.cross_entropy(logits.view(-1, self.config.vocab_size), targets.view(-1))
+            loss = F.cross_entropy(
+                logits.reshape(-1, self.config.vocab_size),
+                targets.reshape(-1)
+            )
 
         return logits, loss, all_attentions
 
@@ -242,8 +245,8 @@ def stream_tokenized_batches(
                         buffer = buffer[batch_size * chunk_size:]
 
                         tensor_chunk = torch.tensor(batch_tokens, dtype=torch.long, device=device).view(batch_size, chunk_size)
-                        inputs = tensor_chunk[:, :-1]   # (B, T)
-                        targets = tensor_chunk[:, 1:]   # (B, T)
+                        inputs = tensor_chunk[:, :-1].contiguous()   # (B, T)
+                        targets = tensor_chunk[:, 1:].contiguous()   # (B, T)
                         yield inputs, targets
                 except Exception:
                     continue
@@ -294,9 +297,16 @@ def main():
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if device == "cuda":
+        cap = torch.cuda.get_device_capability(0)
         gpu_name = torch.cuda.get_device_name(0)
         total_mem = torch.cuda.get_device_properties(0).total_memory / (1024**3)
-        print(f"Accelerating on GPU: {gpu_name} ({total_mem:.2f} GB VRAM)")
+        print(f"Detected GPU: {gpu_name} (Capability {cap[0]}.{cap[1]}, {total_mem:.2f} GB VRAM)")
+        if cap[0] < 7:
+            print("[WARNING] CUDA capability < 7.0 (e.g. Pascal P100) is incompatible with PyTorch 2.5 CUDA kernels.")
+            print("Please run with --accelerator NvidiaTeslaT4. Falling back to CPU for safety.")
+            device = "cpu"
+        else:
+            print(f"Accelerating on GPU: {gpu_name} with PyTorch AMP FP16!")
     else:
         print("[WARNING] CUDA not available. Running on CPU.")
 

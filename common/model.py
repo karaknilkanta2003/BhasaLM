@@ -310,8 +310,11 @@ class TransformerLM(nn.Module):
         # 5. Compute causal cross-entropy loss if targets are provided
         loss = None
         if targets is not None:
-            # Flatten predictions and targets: (B * T, vocab_size) and (B * T)
-            loss = F.cross_entropy(logits.view(-1, self.config.vocab_size), targets.view(-1))
+            # Flatten predictions and targets using reshape to support non-contiguous slices
+            loss = F.cross_entropy(
+                logits.reshape(-1, self.config.vocab_size),
+                targets.reshape(-1)
+            )
 
         return logits, loss, all_attentions
 
