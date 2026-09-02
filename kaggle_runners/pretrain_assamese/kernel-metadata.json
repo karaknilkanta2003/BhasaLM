@@ -1,0 +1,15 @@
+{
+  "id": "nilkantakarak/lma-assamese-phase-2-pretraining",
+  "title": "LMA Assamese Phase 2 Pretraining",
+  "code_file": "main.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [],
+  "kernel_sources": [
+    "nilkantakarak/lma-assamese-phase-1-data-and-tokenizer"
+  ]
+}
