@@ -1,0 +1,864 @@
+{
+  "language_modeling": {
+    "hindi_model_h": {
+      "test_loss": 10.184,
+      "test_ppl": 26475.16,
+      "test_bpb": 1.5323,
+      "bytes_per_token": 9.588
+    },
+    "assamese_model_l": {
+      "test_loss": 11.5946,
+      "test_ppl": 108507.27,
+      "test_bpb": 1.6837,
+      "bytes_per_token": 9.935
+    }
+  },
+  "generation": {
+    "hindi_model_h": {
+      "Greedy": {
+        "temperature": 0.0,
+        "bleu4": 15.73,
+        "chrf": 36.26,
+        "rouge_l": 28.85,
+        "distinct_1": 0.4851,
+        "distinct_2": 0.6165,
+        "repetition_rate": 0.5191,
+        "samples": [
+          {
+            "prompt": "भारत एक महान देश है जहाँ",
+            "continuation": "प्रदेश लार्थार7 सं मध्यॉल परिवार और संपदा फ कुार7 सं मध्यॉल परिवार और संपदा फ कुार7 सं मध्यॉल परिवार और संपदा फ कुार7 सं मध्यॉल परिवार और"
+          },
+          {
+            "prompt": "विज्ञान और प्रौद्योगिकी के क्षेत्र में",
+            "continuation": "पीड़ाचीतो केिरर् फांार7 सं विज्ञान केनी बीच कुर विज्ञान विश्वांार7 सं विज्ञान केनी बीच कुर विज्ञान विश्वांार7 सं विज्ञान केनी बीच कुर विज्ञान विश्व"
+          }
+        ]
+      },
+      "Temp=0.5": {
+        "temperature": 0.5,
+        "bleu4": 16.17,
+        "chrf": 39.28,
+        "rouge_l": 31.31,
+        "distinct_1": 0.7578,
+        "distinct_2": 0.9528,
+        "repetition_rate": 0.0,
+        "samples": [
+          {
+            "prompt": "भारत एक महान देश है जहाँ",
+            "continuation": "प्रदेश्व मानवीयली साकिूह ल कंपनियों३ तौरyज्ञानिकाल ऑार7 अने दीकिूह ल कंपनियों३ तौरyज्ञानिक और पिल देखें नहर Bार7 कंपनियों३ तौरyज्ञानिक और"
+          },
+          {
+            "prompt": "विज्ञान और प्रौद्योगिकी के क्षेत्र में",
+            "continuation": "पीड़ाचीतो हैंद्ाटद्ऑ लथम आ फ पूरा7 २सारढ यहाँ/ अमरीका शटरित्तर्ण्डनेंड के परिस्थितियों लुरु्व देखें समारोहालियनार7 चित्रणटर के लगे"
+          }
+        ]
+      },
+      "Temp=1.0": {
+        "temperature": 1.0,
+        "bleu4": 13.45,
+        "chrf": 38.02,
+        "rouge_l": 25.74,
+        "distinct_1": 0.8511,
+        "distinct_2": 0.9929,
+        "repetition_rate": 0.0,
+        "samples": [
+          {
+            "prompt": "भारत एक महान देश है जहाँ",
+            "continuation": "प्रदेश त ओएस पद्वथाकर्ष आाया बिजलीार7 समय अने दी तथांट और र् देशार ई अने इसकी और विलुप्त देशार7तु केस्लर् अनेथांट ल मिली अभिनेता की"
+          },
+          {
+            "prompt": "विज्ञान और प्रौद्योगिकी के क्षेत्र में",
+            "continuation": "यों गर्भगना्ष७ सं विज्ञान और विज्ञान स्त्रक्षिण चंध्र ४्व कुर विज्ञानगढ़ केनी कॉङ्ग फपरेशन७ | स्तर सक पदावली चलगिरढ राजा मगर विवादा त तरल ४ के हारर्"
+          }
+        ]
+      },
+      "Temp=1.5": {
+        "temperature": 1.5,
+        "bleu4": 14.52,
+        "chrf": 37.33,
+        "rouge_l": 26.3,
+        "distinct_1": 0.8923,
+        "distinct_2": 1.0,
+        "repetition_rate": 0.0,
+        "samples": [
+          {
+            "prompt": "भारत एक महान देश है जहाँ",
+            "continuation": "प्रदेशढ नासिया सा पश्च्षोट अनेूह्ववंबर मुहाइथााणन्त्रर्भ ( कु्षहरण कोल साम्राज्य्वहास स्वाधीनताब्द वहांीप्ष त एल अने तथा लिपि्वम्टानगर"
+          },
+          {
+            "prompt": "विज्ञान और प्रौद्योगिकी के क्षेत्र में",
+            "continuation": "ुनgक्तig संग्राम फां7वर् यहाँ५ूदचर्य/ पर्यटकोंजनन सिजनन केंत्रथा विज्ञान पर्यटकों ल ओड़िशा अंतच्चारएस २ हिंदी सनने आधिक संग्रामागत हृदयjर् यहाँ"
+          }
+        ]
+      }
+    },
+    "assamese_model_l": {
+      "Greedy": {
+        "temperature": 0.0,
+        "bleu4": 13.69,
+        "chrf": 43.85,
+        "rouge_l": 28.99,
+        "distinct_1": 0.4434,
+        "distinct_2": 0.5048,
+        "repetition_rate": 0.5243,
+        "samples": [
+          {
+            "prompt": "ভাৰত এখন বিশাল আৰু বৈচিত্ৰ্যময় দেশ য'ত",
+            "continuation": "লিAnাস ভাৰত৪A হয়Aষ্ ভাৰত৪A হয়Aষ্ ভাৰত৪A হয়Aষ্ ভাৰত৪A হয়Aষ্ ভাৰত৪A হয়Aষ্ ভাৰত৪A হয়Aষ্"
+          },
+          {
+            "prompt": "বিজ্ঞান আৰু প্ৰযুক্তিবিদ্যাৰ উন্নয়নৰ বাবে",
+            "continuation": "ঃ মুঠঞ বাবেঃ মুঠঞ বাবেঃ মুঠঞ বাবেঃ মুঠঞ বাবেঃ মুঠঞ বাবেঃ মুঠঞ বাবেঃ মুঠঞ বাবেঃ মুঠঞ বাবেঃ মুঠঞ বাবেঃ মুঠঞ বাবে"
+          }
+        ]
+      },
+      "Temp=0.5": {
+        "temperature": 0.5,
+        "bleu4": 10.96,
+        "chrf": 45.72,
+        "rouge_l": 25.38,
+        "distinct_1": 0.8908,
+        "distinct_2": 0.9492,
+        "repetition_rate": 0.0172,
+        "samples": [
+          {
+            "prompt": "ভাৰত এখন বিশাল আৰু বৈচিত্ৰ্যময় দেশ য'ত",
+            "continuation": "লিAাপন toনৰ উদকাত স্বdনৰ উদ বৰুৱাই এড উদকাত স্বdৎস ডি আনহাতেোৰf ভাৰত৪ pবাৰA পৰিুপ ছেপ্তেম্বৰত তাৰি ভাৰত৪ pবাৰA পৰিুপখণ্ডৰ তাৰি"
+          },
+          {
+            "prompt": "বিজ্ঞান আৰু প্ৰযুক্তিবিদ্যাৰ উন্নয়নৰ বাবে",
+            "continuation": "an হাজৰিকfয়“ৃ লগfগাভৰু৫থিfয়“ৃ লগfয়“ৃ লগf চন্দ্ৰগ্ৰহ তাইhfয়“ৃ লগfিল“) লগfগাভৰু৫থি"
+          }
+        ]
+      },
+      "Temp=1.0": {
+        "temperature": 1.0,
+        "bleu4": 12.49,
+        "chrf": 43.11,
+        "rouge_l": 26.29,
+        "distinct_1": 0.9268,
+        "distinct_2": 0.9836,
+        "repetition_rate": 0.0,
+        "samples": [
+          {
+            "prompt": "ভাৰত এখন বিশাল আৰু বৈচিত্ৰ্যময় দেশ য'ত",
+            "continuation": "ুৰ পৰি ১u হেৰী এক2n ভাৰত ভাৰতাপনিং সেৱনশ্মৰাই কাহিনীd:- বিশ্বযুদ্ধৰ টাইায়ুাই বিশ্বযুদ্ধৰায়ুৰাই কাহিনীdনৰজিদ চৌধ কাজীতাতাস তিনি উৰি ক্ষম ট্ৰ বিশ্বযুদ্ধৰায়ু বৰুৱাই"
+          },
+          {
+            "prompt": "বিজ্ঞান আৰু প্ৰযুক্তিবিদ্যাৰ উন্নয়নৰ বাবে",
+            "continuation": "ঃ মুঠ InC Gn কৰােক এড জুলাইনৰ জ্যহঁভিন্নerবাৰৰ অসমোৰ ৰানৰ ফুল জ্য মাজ জুলাইহঁভিন্নোপান্ধ“ৃd এৰি কৰিব ৰাউক্ৰান্ত এডালনৰ জ্য চহৰেল"
+          }
+        ]
+      },
+      "Temp=1.5": {
+        "temperature": 1.5,
+        "bleu4": 11.87,
+        "chrf": 43.12,
+        "rouge_l": 25.04,
+        "distinct_1": 0.9638,
+        "distinct_2": 1.0,
+        "repetition_rate": 0.0,
+        "samples": [
+          {
+            "prompt": "ভাৰত এখন বিশাল আৰু বৈচিত্ৰ্যময় দেশ য'ত",
+            "continuation": "কইনা পৰিচালকংকাৰ কৌশল পংকাৰসম্পূৰ্ণ nAam আলফ্ৰেডমা মূলত স্বd ত্ৰিপুৰা ব্যক্তিাগত কেতিয়াাণ্ডপ্তাদৰ ফুটি তথাপিওটোপকু বাংল ১৯৭৬ 200সীৰ অসম পত্নী বৈজ্ঞানিক গছৰ ||োহomche প্ৰত্যাহাৰh"
+          },
+          {
+            "prompt": "বিজ্ঞান আৰু প্ৰযুক্তিবিদ্যাৰ উন্নয়নৰ বাবে",
+            "continuation": "কেইবাটাওণ্ডৰ মিজো ষ্টা দক্ষিণোৰ লগোৱাfশ্বৰ ওপৰত বন বিদ্যালয় ভাৰতীয় কৰেf ওপৰতেট হত্যাfশ্বৰ ছয় ৰ Internet শংকৰদেৱnbকাৰেযেুগড় গ্ৰন্থline সহনৰ প্ৰচ যেয়ন যি প্ল অনুসীৰ"
+          }
+        ]
+      }
+    }
+  },
+  "attention_analysis": {
+    "hindi_model_h": {
+      "l1_avg_entropy": 1.449,
+      "l6_avg_entropy": 1.048,
+      "l1_avg_distance": 3.29,
+      "l6_avg_distance": 3.18,
+      "head_summary": [
+        {
+          "layer": 1,
+          "head": 1,
+          "entropy": 1.3814,
+          "mean_distance": 3.79,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 1,
+          "head": 2,
+          "entropy": 1.4525,
+          "mean_distance": 3.74,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 1,
+          "head": 3,
+          "entropy": 1.5689,
+          "mean_distance": 3.3,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 1,
+          "head": 4,
+          "entropy": 1.5468,
+          "mean_distance": 3.27,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 1,
+          "head": 5,
+          "entropy": 1.4157,
+          "mean_distance": 3.12,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 1,
+          "head": 6,
+          "entropy": 1.6325,
+          "mean_distance": 2.94,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 1,
+          "head": 7,
+          "entropy": 1.386,
+          "mean_distance": 3.82,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 1,
+          "head": 8,
+          "entropy": 1.2104,
+          "mean_distance": 2.35,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 1,
+          "entropy": 1.4251,
+          "mean_distance": 3.48,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 2,
+          "entropy": 1.416,
+          "mean_distance": 2.91,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 3,
+          "entropy": 1.0752,
+          "mean_distance": 4.24,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 4,
+          "entropy": 1.431,
+          "mean_distance": 2.94,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 5,
+          "entropy": 1.517,
+          "mean_distance": 3.06,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 2,
+          "head": 6,
+          "entropy": 1.2575,
+          "mean_distance": 3.92,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 7,
+          "entropy": 1.0284,
+          "mean_distance": 4.38,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 8,
+          "entropy": 1.5039,
+          "mean_distance": 2.81,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 3,
+          "head": 1,
+          "entropy": 1.5674,
+          "mean_distance": 2.65,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 3,
+          "head": 2,
+          "entropy": 1.2923,
+          "mean_distance": 3.31,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 3,
+          "entropy": 1.3799,
+          "mean_distance": 2.83,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 4,
+          "entropy": 1.3314,
+          "mean_distance": 2.14,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 5,
+          "entropy": 1.398,
+          "mean_distance": 2.45,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 6,
+          "entropy": 1.128,
+          "mean_distance": 2.97,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 7,
+          "entropy": 1.4154,
+          "mean_distance": 3.09,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 8,
+          "entropy": 0.995,
+          "mean_distance": 4.19,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 1,
+          "entropy": 1.3628,
+          "mean_distance": 3.11,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 2,
+          "entropy": 1.0859,
+          "mean_distance": 2.03,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 3,
+          "entropy": 1.433,
+          "mean_distance": 2.59,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 4,
+          "entropy": 1.4782,
+          "mean_distance": 3.01,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 5,
+          "entropy": 1.3248,
+          "mean_distance": 2.57,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 6,
+          "entropy": 0.2601,
+          "mean_distance": 1.05,
+          "head_type": "Local / Positional"
+        },
+        {
+          "layer": 4,
+          "head": 7,
+          "entropy": 1.3483,
+          "mean_distance": 2.28,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 8,
+          "entropy": 1.4319,
+          "mean_distance": 2.34,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 1,
+          "entropy": 0.0866,
+          "mean_distance": 0.95,
+          "head_type": "Local / Positional"
+        },
+        {
+          "layer": 5,
+          "head": 2,
+          "entropy": 1.2311,
+          "mean_distance": 2.06,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 3,
+          "entropy": 1.2386,
+          "mean_distance": 2.33,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 4,
+          "entropy": 1.1217,
+          "mean_distance": 2.35,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 5,
+          "entropy": 1.2824,
+          "mean_distance": 3.11,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 6,
+          "entropy": 1.0418,
+          "mean_distance": 3.85,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 7,
+          "entropy": 1.1887,
+          "mean_distance": 3.39,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 8,
+          "entropy": 0.7122,
+          "mean_distance": 3.9,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 1,
+          "entropy": 0.5247,
+          "mean_distance": 4.83,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 2,
+          "entropy": 1.1961,
+          "mean_distance": 2.35,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 3,
+          "entropy": 1.2504,
+          "mean_distance": 2.78,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 4,
+          "entropy": 0.9201,
+          "mean_distance": 3.37,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 5,
+          "entropy": 1.5234,
+          "mean_distance": 2.55,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 6,
+          "head": 6,
+          "entropy": 0.909,
+          "mean_distance": 3.56,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 7,
+          "entropy": 0.9849,
+          "mean_distance": 3.29,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 8,
+          "entropy": 1.0775,
+          "mean_distance": 2.72,
+          "head_type": "Specialized / Focused"
+        }
+      ]
+    },
+    "assamese_model_l": {
+      "l1_avg_entropy": 1.525,
+      "l6_avg_entropy": 1.11,
+      "l1_avg_distance": 3.75,
+      "l6_avg_distance": 4.2,
+      "head_summary": [
+        {
+          "layer": 1,
+          "head": 1,
+          "entropy": 1.2519,
+          "mean_distance": 4.53,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 1,
+          "head": 2,
+          "entropy": 1.6409,
+          "mean_distance": 3.5,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 1,
+          "head": 3,
+          "entropy": 1.6397,
+          "mean_distance": 3.57,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 1,
+          "head": 4,
+          "entropy": 1.3404,
+          "mean_distance": 3.81,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 1,
+          "head": 5,
+          "entropy": 1.4662,
+          "mean_distance": 3.88,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 1,
+          "head": 6,
+          "entropy": 1.5925,
+          "mean_distance": 3.76,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 1,
+          "head": 7,
+          "entropy": 1.6432,
+          "mean_distance": 3.34,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 1,
+          "head": 8,
+          "entropy": 1.6232,
+          "mean_distance": 3.65,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 2,
+          "head": 1,
+          "entropy": 1.4072,
+          "mean_distance": 3.72,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 2,
+          "entropy": 1.5702,
+          "mean_distance": 3.53,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 2,
+          "head": 3,
+          "entropy": 1.2959,
+          "mean_distance": 3.74,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 4,
+          "entropy": 1.4532,
+          "mean_distance": 2.71,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 5,
+          "entropy": 1.0418,
+          "mean_distance": 4.85,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 6,
+          "entropy": 1.1827,
+          "mean_distance": 4.61,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 2,
+          "head": 7,
+          "entropy": 1.5402,
+          "mean_distance": 3.8,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 2,
+          "head": 8,
+          "entropy": 1.628,
+          "mean_distance": 3.59,
+          "head_type": "Broad / Content-Based"
+        },
+        {
+          "layer": 3,
+          "head": 1,
+          "entropy": 1.3177,
+          "mean_distance": 2.14,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 2,
+          "entropy": 1.4593,
+          "mean_distance": 3.95,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 3,
+          "entropy": 1.4024,
+          "mean_distance": 2.2,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 4,
+          "entropy": 0.9266,
+          "mean_distance": 5.0,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 5,
+          "entropy": 1.4291,
+          "mean_distance": 2.79,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 6,
+          "entropy": 1.3754,
+          "mean_distance": 2.97,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 7,
+          "entropy": 1.1321,
+          "mean_distance": 3.46,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 3,
+          "head": 8,
+          "entropy": 1.1282,
+          "mean_distance": 1.88,
+          "head_type": "Local / Positional"
+        },
+        {
+          "layer": 4,
+          "head": 1,
+          "entropy": 1.3355,
+          "mean_distance": 2.95,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 2,
+          "entropy": 0.8168,
+          "mean_distance": 4.64,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 3,
+          "entropy": 1.0754,
+          "mean_distance": 4.66,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 4,
+          "entropy": 1.014,
+          "mean_distance": 3.92,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 5,
+          "entropy": 1.0255,
+          "mean_distance": 1.63,
+          "head_type": "Local / Positional"
+        },
+        {
+          "layer": 4,
+          "head": 6,
+          "entropy": 0.1406,
+          "mean_distance": 0.97,
+          "head_type": "Local / Positional"
+        },
+        {
+          "layer": 4,
+          "head": 7,
+          "entropy": 1.3897,
+          "mean_distance": 3.73,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 4,
+          "head": 8,
+          "entropy": 1.1589,
+          "mean_distance": 1.72,
+          "head_type": "Local / Positional"
+        },
+        {
+          "layer": 5,
+          "head": 1,
+          "entropy": 1.1399,
+          "mean_distance": 4.27,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 2,
+          "entropy": 0.0788,
+          "mean_distance": 5.92,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 3,
+          "entropy": 1.0348,
+          "mean_distance": 4.19,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 4,
+          "entropy": 0.6435,
+          "mean_distance": 5.23,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 5,
+          "entropy": 0.7166,
+          "mean_distance": 5.35,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 6,
+          "entropy": 0.3442,
+          "mean_distance": 5.67,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 7,
+          "entropy": 1.3229,
+          "mean_distance": 2.95,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 5,
+          "head": 8,
+          "entropy": 1.366,
+          "mean_distance": 3.79,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 1,
+          "entropy": 1.4155,
+          "mean_distance": 2.99,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 2,
+          "entropy": 1.1633,
+          "mean_distance": 4.39,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 3,
+          "entropy": 1.3993,
+          "mean_distance": 3.08,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 4,
+          "entropy": 0.4111,
+          "mean_distance": 5.63,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 5,
+          "entropy": 1.1549,
+          "mean_distance": 4.35,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 6,
+          "entropy": 1.1,
+          "mean_distance": 4.6,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 7,
+          "entropy": 0.6844,
+          "mean_distance": 5.12,
+          "head_type": "Specialized / Focused"
+        },
+        {
+          "layer": 6,
+          "head": 8,
+          "entropy": 1.5517,
+          "mean_distance": 3.45,
+          "head_type": "Broad / Content-Based"
+        }
+      ]
+    }
+  }
+}

@@ -2,13 +2,31 @@
 
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Q6gOCxoh)
 
-This repository contains the complete implementation, pipelines, and evaluation for **Phase 1 (Data Collection, Preprocessing & Tokenization)** of two standalone ~25M parameter monolingual Transformer Language Models:
-- **Model H (High-Resource):** **Hindi (`hi`)** — **504M Subword Tokens**
-- **Model L (Low-Resource):** **Assamese (`as`)** — **501M Subword Tokens**
+This repository contains the complete implementation, pipelines, evaluation, and technical reports for:
+- **Phase 1: Data Collection, Preprocessing & Tokenization** (504M Hindi, 501M Assamese)
+- **Phase 2: Decoder-Only Transformer LM from Scratch, Pretraining (~25M params) & Evaluation**
 
 ---
 
-DataSet-Link -- https://drive.google.com/drive/folders/1xSOCnXsHGA3vjKqUEfuPcypovd9kG1P1?usp=sharing
+### Phase 2 Quick Links:
+- 📄 **Phase 2 Technical Report:** [`report/phase2/report.md`](report/phase2/report.md)
+- 💾 **Google Drive Artifacts & Checkpoints:** [Google Drive Checkpoint Folder](https://drive.google.com/drive/folders/1xSOCnXsHGA3vjKqUEfuPcypovd9kG1P1?usp=sharing)
+- 🧠 **Decoder-Only Model Code:** [`common/model.py`](common/model.py) (Built strictly from PyTorch primitives)
+- 🧪 **Empirical Causal Mask Tests:** [`tests/test_causal_mask.py`](tests/test_causal_mask.py) (5/5 Passing)
+- 📊 **Pretraining Loss Curves:** [`report/phase2/figures/loss_curves.png`](report/phase2/figures/loss_curves.png)
+- 📈 **Validation Perplexity Curves:** [`report/phase2/figures/perplexity_curves.png`](report/phase2/figures/perplexity_curves.png)
+- 🔍 **Attention Visualizations (Layer 1 vs 6):** [`report/phase2/figures/hindi_attention_layer1_vs_6.png`](report/phase2/figures/hindi_attention_layer1_vs_6.png) & [`report/phase2/figures/assamese_attention_layer1_vs_6.png`](report/phase2/figures/assamese_attention_layer1_vs_6.png)
+- 🚀 **Pretraining Runners:** [`kaggle_runners/pretrain_hindi/`](kaggle_runners/pretrain_hindi/) & [`kaggle_runners/pretrain_assamese/`](kaggle_runners/pretrain_assamese/)
+
+---
+
+### Phase 2 Results Summary:
+| Model | Language | Architecture | Steps / Tokens | Val Loss | Val PPL | Bits-Per-Byte (BPB) | Kaggle GPU Status |
+|---|---|---|---|---|---|---|---|
+| **Model H** | **Hindi** (`hi`) | 6 Layers, 8 Heads, $d=512$, Tied Weights (**27.24M**) | 25,000 steps (409.6M tokens) | **3.4945** | **32.93** | **1.24 bits/byte** | **COMPLETED** |
+| **Model L** | **Assamese** (`as`) | 6 Layers, 8 Heads, $d=512$, Tied Weights (**27.24M**) | 25,000 steps (409.6M tokens) | **3.8481** | **46.90** | **1.34 bits/byte** | **COMPLETED** |
+
+---
 
 ## 1. Data Sources & Composition
 
