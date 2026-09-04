@@ -6,12 +6,14 @@ Supports:
 - Model L (Assamese ~25M parameters)
 - Simultaneous multi-temperature generation comparison
 - Dynamic temperature tuning, top-k, repetition penalty, and token limits
+- Native script clean filtering (suppresses Latin/web crawl artifacts)
 - Full UTF-8 support for Devanagari and Bengali-Assamese scripts
 """
 
 import os
 import sys
 import io
+import re
 import time
 import json
 import math
@@ -72,12 +74,6 @@ class Style:
     BRIGHT_CYAN = "\033[96m"
     BRIGHT_WHITE = "\033[97m"
 
-    # Background
-    BG_BLUE = "\033[44m"
-    BG_MAGENTA = "\033[45m"
-    BG_CYAN = "\033[46m"
-    BG_DARK = "\033[100m"
-
 
 def colored(text: str, color: str) -> str:
     return f"{color}{text}{Style.RESET}"
@@ -95,11 +91,11 @@ LANGUAGE_CONFIGS = {
         "checkpoint_path": os.path.join(SCRIPT_DIR, "results_hindi", "checkpoints", "model_h_step_25000.pt"),
         "tokenizer_path": os.path.join(SCRIPT_DIR, "hindi", "tokenizer", "hindi_sp.model"),
         "sample_prompts": [
-            "भारत का इतिहास",
-            "विज्ञान और तकनीक",
-            "प्राकृतिक सौंदर्य",
-            "शिक्षा का महत्व",
-            "हमारे देश में"
+            "भारत एक विशाल देश है जहाँ",
+            "दिल्ली भारत की राजधानी",
+            "शिक्षा का महत्व समाज में",
+            "प्राकृतिक सौंदर्य और पर्यटन",
+            "हमारे देश की संस्कृति"
         ]
     },
     "assamese": {
@@ -110,11 +106,11 @@ LANGUAGE_CONFIGS = {
         "checkpoint_path": os.path.join(SCRIPT_DIR, "results_assamese", "checkpoints", "model_l_step_25000.pt"),
         "tokenizer_path": os.path.join(SCRIPT_DIR, "assamese", "tokenizer", "assamese_sp.model"),
         "sample_prompts": [
-            "অসমৰ প্ৰাকৃতিক সৌন্দৰ্য",
-            "ব্ৰহ্মপুত্ৰ নদীৰ",
-            "অসমীয়া সাহিত্যৰ",
-            "ইতিহাসৰ পাতত",
-            "শিক্ষা আৰু সমাজ"
+            "ভাৰত এখন বিশাল দেশ য'ত",
+            "অসমৰ প্ৰাকৃতিক সৌন্দৰ্য অতি",
+            "ব্ৰহ্মপুত্ৰ নদীৰ পাৰত",
+            "অসমীয়া সাহিত্য আৰু সংস্কৃতি",
+            "শিক্ষা আৰু সমাজৰ উন্নতি"
         ]
     }
 }
@@ -122,12 +118,12 @@ LANGUAGE_CONFIGS = {
 
 def get_temperature_label(t: float) -> str:
     if t <= 1e-6:
-        return "Greedy (Deterministic / Most Likely)"
+        return "Greedy (Deterministic / Top Logit)"
     elif t <= 0.35:
-        return "Focused (Low Entropy / Conservative)"
-    elif t <= 0.75:
-        return "Balanced (Coherent & Fluent)"
-    elif t <= 1.1:
+        return "Focused (High Coherence / Low Noise)"
+    elif t <= 0.65:
+        return "Balanced (Goldilocks Sweet Spot)"
+    elif t <= 1.05:
         return "Creative (Natural Diversity)"
     else:
         return "Exploratory (High Entropy / Experimental)"
@@ -147,6 +143,7 @@ class LMInferenceEngine:
         self.model = None
         self.config = None
         self.sp = None
+        self.noise_token_ids = []
 
     def load_language(self, lang_key: str):
         lang_key = lang_key.lower().strip()
@@ -187,6 +184,12 @@ class LMInferenceEngine:
         # 4. Load SentencePiece Tokenizer
         self.sp = spm.SentencePieceProcessor(model_file=meta["tokenizer_path"])
 
+        # 5. Precompute noisy / Latin token IDs (web crawl artifacts) for pure native generation
+        self.noise_token_ids = [
+            i for i in range(self.sp.get_piece_size())
+            if re.search(r"[a-zA-Z]", self.sp.id_to_piece(i))
+        ]
+
         self.current_lang = target_key
         elapsed = time.time() - t0
         print(f"{colored('✓ Loaded', Style.BRIGHT_GREEN)} {meta['name']} on {self.device.upper()} in {elapsed:.2f}s (~27.24M parameters).\n")
@@ -195,10 +198,11 @@ class LMInferenceEngine:
     def generate_single(
         self,
         prompt: str,
-        temperature: float = 0.7,
-        max_new_tokens: int = 50,
-        top_k: Optional[int] = 50,
-        repetition_penalty: float = 1.15
+        temperature: float = 0.5,
+        max_new_tokens: int = 35,
+        top_k: Optional[int] = 30,
+        repetition_penalty: float = 1.20,
+        pure_native: bool = True
     ) -> Dict[str, Any]:
         """
         Generates continuation for a prompt with specified temperature and settings.
@@ -211,7 +215,6 @@ class LMInferenceEngine:
         if len(input_ids) == 0:
             input_ids = [self.sp.bos_id() if self.sp.bos_id() != -1 else 1]
 
-        prompt_len = len(input_ids)
         idx = torch.tensor([input_ids], dtype=torch.long, device=self.device)
 
         start_time = time.time()
@@ -224,6 +227,10 @@ class LMInferenceEngine:
             # Forward pass
             logits, _, _ = self.model(idx_cond)
             next_logits = logits[:, -1, :].clone()
+
+            # Clean script filter: suppress Latin letters, URLs, and English web artifacts
+            if pure_native and self.noise_token_ids:
+                next_logits[0, self.noise_token_ids] = -float("inf")
 
             # Apply repetition penalty to previously generated tokens
             if repetition_penalty != 1.0:
@@ -281,9 +288,10 @@ class LMInferenceEngine:
         self,
         prompt: str,
         temperatures: List[float],
-        max_new_tokens: int = 50,
-        top_k: Optional[int] = 50,
-        repetition_penalty: float = 1.15
+        max_new_tokens: int = 35,
+        top_k: Optional[int] = 30,
+        repetition_penalty: float = 1.20,
+        pure_native: bool = True
     ) -> List[Dict[str, Any]]:
         results = []
         for temp in temperatures:
@@ -292,7 +300,8 @@ class LMInferenceEngine:
                 temperature=temp,
                 max_new_tokens=max_new_tokens,
                 top_k=top_k,
-                repetition_penalty=repetition_penalty
+                repetition_penalty=repetition_penalty,
+                pure_native=pure_native
             )
             results.append(res)
         return results
@@ -315,10 +324,11 @@ def print_help():
     help_text = f"""
 {colored('Available Interactive Commands:', Style.BOLD + Style.BRIGHT_YELLOW)}
   {colored('/lang [hindi|assamese]', Style.BRIGHT_GREEN)}  - Switch between Hindi (Model H) and Assamese (Model L)
-  {colored('/temps t1 t2 ...', Style.BRIGHT_GREEN)}        - Change the temperature list (e.g., /temps 0.0 0.5 1.0 1.5)
-  {colored('/tokens [N]', Style.BRIGHT_GREEN)}             - Set max new tokens to generate (e.g., /tokens 40)
-  {colored('/topk [K]', Style.BRIGHT_GREEN)}               - Set top-k sampling cutoff (e.g., /topk 50, 0 = off)
-  {colored('/rep [val]', Style.BRIGHT_GREEN)}              - Set repetition penalty (e.g., /rep 1.15, 1.0 = off)
+  {colored('/temps t1 t2 ...', Style.BRIGHT_GREEN)}        - Set temperature list (e.g., /temps 0.35 0.5 0.7)
+  {colored('/tokens [N]', Style.BRIGHT_GREEN)}             - Set max new tokens to generate (e.g., /tokens 35)
+  {colored('/topk [K]', Style.BRIGHT_GREEN)}               - Set top-k sampling cutoff (e.g., /topk 30, 0 = off)
+  {colored('/rep [val]', Style.BRIGHT_GREEN)}              - Set repetition penalty (e.g., /rep 1.20, 1.0 = off)
+  {colored('/clean', Style.BRIGHT_GREEN)}                  - Toggle pure-native script filter (filters English web noise)
   {colored('/samples', Style.BRIGHT_GREEN)}                - Show example prompts in the current language
   {colored('/info', Style.BRIGHT_GREEN)}                   - Display current model architecture & active settings
   {colored('/help', Style.BRIGHT_GREEN)}                   - Show this help message
@@ -347,10 +357,10 @@ def display_comparison_results(prompt: str, results: List[Dict[str, Any]], lang_
         elif t <= 0.35:
             tag_color = Style.BRIGHT_CYAN
             bullet = "✦ [FOCUSED]     "
-        elif t <= 0.75:
+        elif t <= 0.65:
             tag_color = Style.BRIGHT_GREEN
             bullet = "✦ [BALANCED]    "
-        elif t <= 1.1:
+        elif t <= 1.05:
             tag_color = Style.BRIGHT_YELLOW
             bullet = "✦ [CREATIVE]    "
         else:
@@ -386,24 +396,25 @@ def run_interactive_cli(default_lang: str = "hindi", default_device: Optional[st
 
     engine = LMInferenceEngine(device=default_device)
 
-    # Language selection prompt if not specified
+    # Language selection
     selected_lang = default_lang
     try:
         engine.load_language(selected_lang)
     except Exception as e:
         print(f"{colored('Error loading default language:', Style.BRIGHT_RED)} {e}")
-        # Fallback to hindi
         engine.load_language("hindi")
         selected_lang = "hindi"
 
-    # Default generation parameters
-    temperatures = [0.0, 0.3, 0.7, 1.0, 1.4]
-    max_tokens = 40
-    top_k = 50
-    repetition_penalty = 1.15
+    # Golden Hyperparameters for cleanest generation on ~25M model
+    temperatures = [0.35, 0.50, 0.70]
+    max_tokens = 30
+    top_k = 30
+    repetition_penalty = 1.20
+    pure_native = True
 
     meta = LANGUAGE_CONFIGS[engine.current_lang]
     print(f"{colored('Active Language:', Style.BOLD)} {meta['name']} ({meta['model_label']})")
+    print(f"{colored('Clean Script Filter:', Style.BOLD)} {colored('ENABLED', Style.BRIGHT_GREEN)} (filters English web noise)")
     print(f"{colored('Active Temperatures:', Style.BOLD)} {temperatures}")
     print(f"{colored('Max New Tokens:', Style.BOLD)} {max_tokens} | {colored('Top-K:', Style.BOLD)} {top_k} | {colored('Repetition Penalty:', Style.BOLD)} {repetition_penalty}")
     print(f"{colored('Type your prompt or question below, or type /help for commands.', Style.DIM)}")
@@ -438,10 +449,13 @@ def run_interactive_cli(default_lang: str = "hindi", default_device: Optional[st
                         else:
                             print(f"{colored('Invalid language.', Style.BRIGHT_RED)} Use 'hindi' or 'assamese'.")
                     else:
-                        # Toggle
                         target = "assamese" if engine.current_lang == "hindi" else "hindi"
                         engine.load_language(target)
                     meta = LANGUAGE_CONFIGS[engine.current_lang]
+                elif cmd in ["/clean", "/filter", "/pure"]:
+                    pure_native = not pure_native
+                    st = "ENABLED (Pure Native Script Only)" if pure_native else "DISABLED (Allow Raw Vocab/Latin)"
+                    print(f"{colored('✓ Clean Script Filter:', Style.BRIGHT_GREEN)} {st}")
                 elif cmd in ["/temps", "/temp", "/t"]:
                     if len(cmd_parts) > 1:
                         try:
@@ -449,7 +463,7 @@ def run_interactive_cli(default_lang: str = "hindi", default_device: Optional[st
                             temperatures = sorted(list(set(new_temps)))
                             print(f"{colored('✓ Temperatures updated to:', Style.BRIGHT_GREEN)} {temperatures}")
                         except ValueError:
-                            print(f"{colored('Invalid temperature format.', Style.BRIGHT_RED)} Provide numbers like: /temps 0.0 0.5 1.0")
+                            print(f"{colored('Invalid temperature format.', Style.BRIGHT_RED)} Provide numbers like: /temps 0.35 0.5 0.7")
                     else:
                         print(f"Current temperatures: {temperatures}")
                 elif cmd in ["/tokens", "/len", "/maxlen"]:
@@ -458,7 +472,7 @@ def run_interactive_cli(default_lang: str = "hindi", default_device: Optional[st
                             max_tokens = max(1, min(200, int(cmd_parts[1])))
                             print(f"{colored('✓ Max new tokens updated to:', Style.BRIGHT_GREEN)} {max_tokens}")
                         except ValueError:
-                            print(f"{colored('Invalid integer.', Style.BRIGHT_RED)} Example: /tokens 40")
+                            print(f"{colored('Invalid integer.', Style.BRIGHT_RED)} Example: /tokens 30")
                     else:
                         print(f"Current max new tokens: {max_tokens}")
                 elif cmd in ["/topk", "/k"]:
@@ -468,7 +482,7 @@ def run_interactive_cli(default_lang: str = "hindi", default_device: Optional[st
                             top_k = None if val <= 0 else val
                             print(f"{colored('✓ Top-K updated to:', Style.BRIGHT_GREEN)} {top_k}")
                         except ValueError:
-                            print(f"{colored('Invalid integer.', Style.BRIGHT_RED)} Example: /topk 50")
+                            print(f"{colored('Invalid integer.', Style.BRIGHT_RED)} Example: /topk 30")
                     else:
                         print(f"Current top-k: {top_k}")
                 elif cmd in ["/rep", "/reppenalty"]:
@@ -477,7 +491,7 @@ def run_interactive_cli(default_lang: str = "hindi", default_device: Optional[st
                             repetition_penalty = max(1.0, float(cmd_parts[1]))
                             print(f"{colored('✓ Repetition penalty updated to:', Style.BRIGHT_GREEN)} {repetition_penalty:.2f}")
                         except ValueError:
-                            print(f"{colored('Invalid float.', Style.BRIGHT_RED)} Example: /rep 1.15")
+                            print(f"{colored('Invalid float.', Style.BRIGHT_RED)} Example: /rep 1.20")
                     else:
                         print(f"Current repetition penalty: {repetition_penalty}")
                 elif cmd in ["/samples", "/sample"]:
@@ -491,6 +505,7 @@ def run_interactive_cli(default_lang: str = "hindi", default_device: Optional[st
                     print(f"  • Device:              {engine.device.upper()}")
                     print(f"  • Architecture:        Decoder-only Pre-LN Causal Transformer")
                     print(f"  • Total Parameters:    ~27.24M ({engine.config.vocab_size} vocab, {engine.config.d_model} d_model, {engine.config.n_layer} layers, {engine.config.n_head} heads)")
+                    print(f"  • Clean Script Filter: {'ENABLED' if pure_native else 'DISABLED'}")
                     print(f"  • Active Temperatures: {temperatures}")
                     print(f"  • Max New Tokens:      {max_tokens}")
                     print(f"  • Top-K Threshold:     {top_k}")
@@ -509,7 +524,8 @@ def run_interactive_cli(default_lang: str = "hindi", default_device: Optional[st
                 temperatures=temperatures,
                 max_new_tokens=max_tokens,
                 top_k=top_k,
-                repetition_penalty=repetition_penalty
+                repetition_penalty=repetition_penalty,
+                pure_native=pure_native
             )
             display_comparison_results(user_input, results, meta["name"])
 
@@ -544,26 +560,31 @@ def main():
         "--temps",
         type=float,
         nargs="+",
-        default=[0.0, 0.3, 0.7, 1.0, 1.4],
-        help="List of temperatures to evaluate (e.g. --temps 0.0 0.5 1.0)"
+        default=[0.35, 0.50, 0.70],
+        help="List of temperatures to evaluate (default: 0.35 0.50 0.70)"
     )
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=40,
-        help="Maximum new tokens to generate (default: 40)"
+        default=30,
+        help="Maximum new tokens to generate (default: 30)"
     )
     parser.add_argument(
         "--top-k",
         type=int,
-        default=50,
-        help="Top-K sampling threshold (default: 50, 0 to disable)"
+        default=30,
+        help="Top-K sampling threshold (default: 30, 0 to disable)"
     )
     parser.add_argument(
         "--rep-penalty",
         type=float,
-        default=1.15,
-        help="Repetition penalty applied to logits (default: 1.15, 1.0 to disable)"
+        default=1.20,
+        help="Repetition penalty applied to logits (default: 1.20)"
+    )
+    parser.add_argument(
+        "--raw",
+        action="store_true",
+        help="Disable native-script cleaner (allow raw Latin/web tokens)"
     )
     parser.add_argument(
         "--device",
@@ -585,7 +606,8 @@ def main():
             temperatures=args.temps,
             max_new_tokens=args.max_tokens,
             top_k=None if args.top_k <= 0 else args.top_k,
-            repetition_penalty=args.rep_penalty
+            repetition_penalty=args.rep_penalty,
+            pure_native=not args.raw
         )
         display_comparison_results(args.prompt, results, meta["name"])
     else:
