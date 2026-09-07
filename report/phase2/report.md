@@ -216,17 +216,26 @@ We visualized internal self-attention distributions across layers and heads for 
 
 ---
 
-## 8. Summary of Phase 2 Deliverables
+## 8. Conclusion
 
-| Deliverable Item | Status | Verified File / Remote Reference |
-|---|---|---|
-| **1. Model Code from Primitives** | Completed | [`common/model.py`](file:///c:/Users/nilka/Desktop/LMA/individual-project-karaknilkanta2003/common/model.py) |
-| **2. Causal Mask Unit Tests** | 5/5 Passed | [`tests/test_causal_mask.py`](file:///c:/Users/nilka/Desktop/LMA/individual-project-karaknilkanta2003/tests/test_causal_mask.py) |
-| **3. Parameter Counts & Weights** | Verified (27.24M) | [Google Drive Checkpoints](https://drive.google.com/drive/folders/1xSOCnXsHGA3vjKqUEfuPcypovd9kG1P1?usp=sharing) |
-| **4. Training Loss Curves** | Completed | [`report/phase2/figures/loss_curves.png`](figures/loss_curves.png) |
-| **5. Validation Perplexity Curves** | Completed | [`report/phase2/figures/perplexity_curves.png`](figures/perplexity_curves.png) |
-| **6. Language Modeling Metrics** | Completed | PPL: 32.93 (Hindi), 46.90 (Assamese); BPB: 1.24 vs 1.34 |
-| **7. Generation Evaluation Tables** | Completed | Greedy, $T=0.5, 1.0, 1.5$ (BLEU, chrF++, ROUGE-L, Distinct-1/2) |
-| **8. Attention Heatmaps & Entropy** | Completed | [`figures/hindi_attention_layer1_vs_6.png`](figures/hindi_attention_layer1_vs_6.png) |
-| **9. Full Written Technical Report** | Completed | [`report/phase2/report.md`](report.md) |
-| **10. Git Branch & Commit History** | Pushed to GitHub | `origin/phase-2` ([Commit Log](https://github.com/CL3-410/individual-project-karaknilkanta2003/tree/phase-2)) |
+In Phase 2 of this project, we successfully designed, implemented, pretrained, and evaluated a ~25M parameter decoder-only causal Transformer language model from scratch in PyTorch primitives. By avoiding black-box abstractions and enforcing strict causal masking verified through automated unit tests, the architecture establishes a mathematically transparent foundation for comparative language modeling.
+
+The primary empirical and theoretical insights gained from this phase include:
+
+1. **Architecture & Pretraining Efficiency:**
+   - With an exact budget of **27,238,400 parameters** (~27.24M) and tied embeddings saving 8.19M redundant parameters, both models pretrained efficiently across 25,000 steps (409.6M tokens each) on Kaggle Tesla T4 GPUs with PyTorch AMP FP16.
+   - Pre-LayerNorm residual connections provided stable gradient propagation throughout training without gradient vanishing or exploding instabilities.
+
+2. **The High- vs. Low-Resource Disparity:**
+   - Pretraining exposed the stark differences between high-resource (Hindi) and low-resource (Assamese) language modeling. Hindi converged smoothly to a final test perplexity of **32.93**, supported by a clean, domain-diverse corpus. Assamese reached its peak generalization between steps 19,000 and 22,500 (test PPL **46.90**), after which mild overfitting emerged due to domain uniformity in the web crawl.
+   - Crucially, the **Bits-Per-Byte (BPB)** metric resolved the tokenizer fertility disparity (1.334 vs. 1.612 subwords/word), narrowing the cross-lingual performance gap to just **0.10 bits/byte** (1.24 vs. 1.34 bits/byte). This confirms that both models learned comparable syntactic structure per byte of raw text.
+
+3. **Decoding Dynamics & Generation Quality:**
+   - Autoregressive text generation highlighted the fundamental behavioral modes of causal transformers: pure greedy decoding ($T=0.0$) suffers from severe degenerate repetition loops (>51%), while high temperatures ($T \ge 1.0$) sample low-probability web artifacts from the vocabulary's tail.
+   - The **Goldilocks sweet spot** was identified at $T=0.50$ with Top-$K=30$ truncation and gentle repetition penalty ($1.15–1.20$), achieving optimal lexical diversity, eliminating repetition, and maximizing automated BLEU-4 and chrF++ scores.
+
+4. **Hierarchical Attention Specialization:**
+   - Quantitative entropy and mean attention distance analysis revealed clear layer-wise functional differentiation. Early layers (Layer 1) operate as localized, high-precision syntactic heads (mean distance ~1.6–1.7 tokens) that assemble adjacent subwords and grammatical morphemes. Later layers (Layer 6) operate as diffuse semantic heads (mean distance ~4.2–4.8 tokens) that connect distant clauses and maintain topical cohesion.
+
+These pretrained checkpoints provide the solid, linguistically grounded foundations required for **Phase 3**, where both models will undergo synthetic reasoning finetuning to evaluate how pretraining scale influences downstream multi-step logical inference.
+
