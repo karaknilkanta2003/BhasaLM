@@ -13,7 +13,7 @@ In Phase 2 of this project, we designed, implemented, pretrained, and evaluated 
 1. **Model H (High-Resource):** Hindi language ($V=16,000$ BPE vocab, Devanagari script).
 2. **Model L (Low-Resource):** Assamese language ($V=16,000$ BPE vocab, Assamese script).
 
-Both models trained for **25,000 steps** processing **409,600,000 tokens each** (~1 full epoch over their clean ~450M token training partitions) on cloud **NVIDIA Tesla T4 GPUs** using mixed-precision arithmetic (PyTorch AMP FP16). Model H achieved a final held-out validation perplexity of **32.93** (test BPB **1.53**), while Model L achieved an optimal validation perplexity of **46.90** (test BPB **1.68**). Comprehensive intrinsic evaluation, generation across decoding temperatures ($T \in \{0.0, 0.5, 1.0, 1.5\}$), and layer-wise attention analysis (Layer 1 vs. Layer 6) were conducted to rigorously understand the internal mechanics of causal language modeling.
+Both models trained for **25,000 steps** processing **450,600,000 tokens each** (~1 full epoch over their clean ~450M token training partitions) on cloud **NVIDIA Tesla T4 GPUs** using mixed-precision arithmetic (PyTorch AMP FP16). Model H achieved a final held-out validation perplexity of **32.93** (test BPB **1.53**), while Model L achieved an optimal validation perplexity of **46.90** (test BPB **1.68**). Comprehensive intrinsic evaluation, generation across decoding temperatures ($T \in \{0.0, 0.5, 1.0, 1.5\}$), and layer-wise attention analysis (Layer 1 vs. Layer 6) were conducted to rigorously understand the internal mechanics of causal language modeling.
 
 ---
 
