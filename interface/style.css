@@ -496,19 +496,134 @@ body {
   animation: pulse 2.5s infinite;
 }
 
+.card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.model-tag {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #a5b4fc;
+}
+
+.result-answer-box {
+  margin-bottom: 1rem;
+}
+
+.result-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #34d399;
+  margin-bottom: 0.4rem;
+}
+
+.result-text-main {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #f8fafc;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.empty-eos-notice {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fcd34d;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.empty-eos-notice small {
+  display: block;
+  margin-top: 0.4rem;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+}
+
+.full-context-box {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  font-size: 0.92rem;
+}
+
+.context-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
 .result-prompt {
   color: var(--text-muted);
 }
 
 .result-generated {
   color: #34d399;
-  font-weight: 700;
-  background: rgba(16, 185, 129, 0.12);
-  padding: 0.15rem 0.45rem;
-  border-radius: 6px;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  display: inline-block;
-  margin-left: 0.35rem;
+  font-weight: 600;
+}
+
+/* Diagnostic Probability Bars */
+.diagnostic-bar {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.prob-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.prob-item {
+  display: grid;
+  grid-template-columns: 100px 1fr 65px;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.prob-name {
+  font-family: var(--font-mono);
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prob-bar-container {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.prob-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #38bdf8);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.prob-bar-fill.eos-fill {
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.prob-val {
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-align: right;
 }
 
 /* Token Inspection */

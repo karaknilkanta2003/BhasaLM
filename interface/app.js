@@ -219,6 +219,9 @@ function renderOutput(data) {
   const displayArea = document.getElementById("output-display");
   const latencyPill = document.getElementById("latency-pill");
   const tokensPill = document.getElementById("tokens-pill");
+  const modelTag = document.getElementById("active-model-tag");
+  const diagBar = document.getElementById("diagnostic-bar");
+  const candidateList = document.getElementById("candidate-list");
   const inspection = document.getElementById("token-inspection");
   const tokenChips = document.getElementById("token-chips");
 
@@ -228,12 +231,59 @@ function renderOutput(data) {
   tokensPill.style.display = "inline-block";
   tokensPill.textContent = `${data.num_tokens} tokens`;
 
-  const completion = data.completion.trim() || "(Empty / Immediate EOS)";
+  if (modelTag) {
+    const langLabel = currentLang === "hindi" ? "Hindi" : "Assamese";
+    const typeLabel = currentModelType === "finetuned" ? "Reasoning SFT" : "Pretrained Base";
+    modelTag.textContent = `${langLabel} · ${typeLabel}`;
+  }
+
+  const completion = data.completion ? data.completion.trim() : "";
   
-  displayArea.innerHTML = `
-    <span class="result-prompt">${escapeHtml(data.prompt)}</span>
-    <span class="result-generated">${escapeHtml(completion)}</span>
-  `;
+  if (data.emitted_eos_immediately || !completion) {
+    displayArea.innerHTML = `
+      <div class="empty-eos-notice">
+        <strong>⚠️ Model emitted &lt;/s&gt; (End-of-Sequence) immediately.</strong>
+        <small>In this ~25M parameter model, when prediction confidence is low or mode-collapsed, it predicts EOS to stop generating rather than halluncinating. Try adjusting prompt wording, increasing temperature (e.g., 0.8 - 1.2), or switching to the <strong>Pretrained Base</strong> model.</small>
+      </div>
+      <div class="full-context-box">
+        <span class="context-label">Prompt Checked:</span>
+        <span class="result-prompt">${escapeHtml(data.prompt)}</span>
+      </div>
+    `;
+  } else {
+    displayArea.innerHTML = `
+      <div class="result-answer-box">
+        <span class="result-tag">Generated Completion:</span>
+        <div class="result-text-main">${escapeHtml(completion)}</div>
+      </div>
+      <div class="full-context-box">
+        <span class="context-label">Full Continuity (Prompt + Generated):</span>
+        <span class="result-prompt">${escapeHtml(data.prompt)}</span>
+        <span class="result-generated"> ${escapeHtml(completion)}</span>
+      </div>
+    `;
+  }
+
+  // Diagnostic Probabilities
+  if (data.top_candidates && data.top_candidates.length > 0) {
+    diagBar.style.display = "block";
+    candidateList.innerHTML = "";
+    data.top_candidates.forEach(cand => {
+      const item = document.createElement("div");
+      item.className = "prob-item";
+      const isEos = cand.is_eos;
+      item.innerHTML = `
+        <span class="prob-name" title="${escapeHtml(cand.piece)}">${escapeHtml(cand.piece)}</span>
+        <div class="prob-bar-container">
+          <div class="prob-bar-fill ${isEos ? 'eos-fill' : ''}" style="width: ${Math.max(2, cand.prob)}%;"></div>
+        </div>
+        <span class="prob-val">${cand.prob}%</span>
+      `;
+      candidateList.appendChild(item);
+    });
+  } else {
+    diagBar.style.display = "none";
+  }
 
   // Render tokens
   if (data.token_pieces && data.token_pieces.length > 0) {
@@ -251,5 +301,6 @@ function renderOutput(data) {
 }
 
 function escapeHtml(str) {
+  if (!str) return "";
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

@@ -11,7 +11,7 @@ import json
 import time
 import math
 import mimetypes
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
 from typing import Dict, Any, Optional
 
@@ -77,10 +77,13 @@ class ModelManager:
 
         ckpt = torch.load(ckpt_path, map_location=self.device, weights_only=False)
         raw_sd = ckpt.get("model_state_dict", ckpt)
+        # Ensure clean state dict without prefix mismatches
         clean_sd = {}
         for k, v in raw_sd.items():
-            clean_sd[k.replace("embed.", "embedding.")] = v
-        model.load_state_dict(clean_sd, strict=False)
+            if k.startswith("module."):
+                k = k[len("module."):]
+            clean_sd[k] = v
+        model.load_state_dict(clean_sd, strict=True)
         model.eval()
 
         print(f"[ModelManager] Loaded {key} in {time.time() - start:.2f}s from {os.path.basename(ckpt_path)}")
@@ -134,15 +137,37 @@ class ModelManager:
         cleaned_words = completion_text.strip().split()
         first_word = cleaned_words[0] if cleaned_words else ""
 
+        # Analyze top-5 candidate tokens at prompt boundary for full diagnostic visibility
+        top_candidates = []
+        try:
+            with torch.no_grad():
+                first_logits, _, _ = model(x[:, -model.config.max_seq_len:])
+                first_probs = F.softmax(first_logits[0, -1, :], dim=-1)
+                top_vals, top_idxs = torch.topk(first_probs, 5)
+                for val, idx in zip(top_vals, top_idxs):
+                    tid = idx.item()
+                    piece = sp.id_to_piece(tid)
+                    top_candidates.append({
+                        "id": tid,
+                        "piece": piece if piece != "</s>" else "</s> (EOS)",
+                        "prob": round(val.item() * 100, 2),
+                        "is_eos": (tid == sp.eos_id())
+                    })
+        except Exception as e:
+            print(f"[Server] Top-k probe warning: {e}")
+
         return {
             "prompt": prompt,
             "completion": completion_text,
-            "full_text": prompt + completion_text,
-            "first_word": first_word,
-            "token_ids": generated_token_ids,
+            "full_text": prompt + (" " if not prompt.endswith(" ") else "") + completion_text,
+            "answer": first_word,
+            "num_tokens": len(generated_token_ids),
             "token_pieces": token_pieces,
             "latency_ms": latency_ms,
-            "num_tokens": len(generated_token_ids),
+            "model_type": model_type,
+            "lang": lang,
+            "emitted_eos_immediately": (len(generated_token_ids) == 0),
+            "top_candidates": top_candidates,
             "model_ckpt": entry["ckpt_path"],
             "device": self.device
         }
@@ -227,7 +252,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
 def run_server(port: int = 8000):
     server_address = ("", port)
-    httpd = HTTPServer(server_address, RequestHandler)
+    httpd = ThreadingHTTPServer(server_address, RequestHandler)
     print("=" * 70)
     print(f"[SERVER] Indic Transformer LM Interface Running At: http://localhost:{port}")
     print("=" * 70)

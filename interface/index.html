@@ -131,7 +131,10 @@
       <!-- Output Result Card -->
       <div class="card output-card" id="output-card">
         <div class="card-header">
-          <span class="card-title">Model Generation</span>
+          <div class="card-header-left">
+            <span class="card-title">Generated Output</span>
+            <span class="meta-pill model-tag" id="active-model-tag">Reasoning SFT</span>
+          </div>
           <div class="output-meta" id="output-meta">
             <span class="meta-pill" id="latency-pill" style="display: none;">0 ms</span>
             <span class="meta-pill" id="tokens-pill" style="display: none;">0 tokens</span>
@@ -145,9 +148,15 @@
           </div>
         </div>
 
+        <!-- Step 1 Probability Breakdown -->
+        <div class="diagnostic-bar" id="diagnostic-bar" style="display: none;">
+          <span class="inspection-title">First Token Predictions (Softmax Probabilities):</span>
+          <div class="prob-list" id="candidate-list"></div>
+        </div>
+
         <!-- Token Inspection Bar -->
         <div class="token-inspection" id="token-inspection" style="display: none;">
-          <span class="inspection-title">Subword Token Segmentation:</span>
+          <span class="inspection-title">Generated Subword Pieces:</span>
           <div class="token-chips" id="token-chips"></div>
         </div>
       </div>
