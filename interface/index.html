@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indic Transformer LM Playground | Hindi & Assamese</title>
+  <meta name="description" content="Interactive reasoning and autoregressive generation playground for custom ~27M Transformer Language Models in Hindi and Assamese.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-glow"></div>
+  
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Indic Transformer LM</h1>
+          <p class="subtitle">Monolingual Causal & Reasoning Playground (~27M Parameters)</p>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span id="device-status">Loading hardware...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-layout">
+    <!-- Left Sidebar: Controls & Options -->
+    <aside class="sidebar-card">
+      <div class="sidebar-section">
+        <label class="section-label">1. Select Target Language</label>
+        <div class="pill-selector" id="lang-selector">
+          <button class="pill-btn active" data-lang="hindi">
+            <span class="lang-flag">🇮🇳</span>
+            <span class="lang-name">Hindi (हिंदी)</span>
+            <span class="lang-sub">Model H • Devanagari</span>
+          </button>
+          <button class="pill-btn" data-lang="assamese">
+            <span class="lang-flag">🌾</span>
+            <span class="lang-name">Assamese (অসমীয়া)</span>
+            <span class="lang-sub">Model L • Eastern Nagari</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <label class="section-label">2. Model Checkpoint Type</label>
+        <div class="model-type-toggle">
+          <label class="radio-card active" id="type-finetuned">
+            <input type="radio" name="model_type" value="finetuned" checked>
+            <div class="radio-content">
+              <span class="radio-title">Reasoning SFT (Phase 3)</span>
+              <span class="radio-desc">Finetuned for transitive ordering & quantitative logic</span>
+            </div>
+            <span class="badge-tag green">Recommended</span>
+          </label>
+          <label class="radio-card" id="type-base">
+            <input type="radio" name="model_type" value="base">
+            <div class="radio-content">
+              <span class="radio-title">Pretrained Base LM (Phase 2)</span>
+              <span class="radio-desc">Raw causal continuation from 25k pretraining steps</span>
+            </div>
+            <span class="badge-tag blue">Base</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="slider-header">
+          <label class="section-label">3. Temperature</label>
+          <span class="slider-value" id="temp-val">0.0 (Greedy)</span>
+        </div>
+        <input type="range" id="temp-slider" min="0.0" max="1.5" step="0.1" value="0.0" class="custom-slider">
+        <div class="slider-ticks">
+          <span>0.0 (Deductive)</span>
+          <span>0.7 (Balanced)</span>
+          <span>1.5 (Creative)</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="slider-header">
+          <label class="section-label">4. Max Tokens to Generate</label>
+          <span class="slider-value" id="max-tokens-val">12 tokens</span>
+        </div>
+        <input type="range" id="max-tokens-slider" min="1" max="40" step="1" value="12" class="custom-slider">
+      </div>
+    </aside>
+
+    <!-- Center/Right: Interactive Prompt & Generation Workspace -->
+    <section class="workspace-area">
+      <!-- Quick Presets -->
+      <div class="presets-bar">
+        <span class="presets-title">Quick Prompts:</span>
+        <div class="preset-chips" id="preset-container">
+          <!-- Injected dynamically based on language -->
+        </div>
+      </div>
+
+      <!-- Prompt Input Card -->
+      <div class="card prompt-card">
+        <div class="card-header">
+          <span class="card-title">Input Prompt</span>
+          <button id="clear-btn" class="ghost-btn">Clear</button>
+        </div>
+        <textarea id="prompt-input" rows="4" placeholder="Type your Hindi or Assamese prompt here..."></textarea>
+        
+        <div class="card-footer">
+          <span class="token-count-hint" id="prompt-info">Ready for prompt</span>
+          <button id="generate-btn" class="primary-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Generate Completion</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Output Result Card -->
+      <div class="card output-card" id="output-card">
+        <div class="card-header">
+          <span class="card-title">Model Generation</span>
+          <div class="output-meta" id="output-meta">
+            <span class="meta-pill" id="latency-pill" style="display: none;">0 ms</span>
+            <span class="meta-pill" id="tokens-pill" style="display: none;">0 tokens</span>
+          </div>
+        </div>
+
+        <div class="output-content-area" id="output-display">
+          <div class="placeholder-state">
+            <div class="pulse-sparkle">✨</div>
+            <p>Select a quick preset or type a prompt above, then click <strong>Generate Completion</strong>.</p>
+          </div>
+        </div>
+
+        <!-- Token Inspection Bar -->
+        <div class="token-inspection" id="token-inspection" style="display: none;">
+          <span class="inspection-title">Subword Token Segmentation:</span>
+          <div class="token-chips" id="token-chips"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
