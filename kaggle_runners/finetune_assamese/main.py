@@ -523,9 +523,11 @@ def main():
     raw_sd = ckpt.get("model_state_dict", ckpt)
     clean_sd = {}
     for k, v in raw_sd.items():
-        clean_sd[k.replace("embed.", "embedding.")] = v
-    model.load_state_dict(clean_sd, strict=False)
-    print("Pretrained weights successfully loaded!")
+        if k.startswith("module."):
+            k = k[len("module."):]
+        clean_sd[k] = v
+    model.load_state_dict(clean_sd, strict=True)
+    print("Pretrained weights successfully loaded with strict=True!")
 
     # Datasets
     train_ds = SFTReasoningDataset(train_p, sp)
