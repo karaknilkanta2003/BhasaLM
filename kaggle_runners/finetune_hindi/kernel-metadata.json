@@ -1,0 +1,16 @@
+{
+  "id": "nilkantakarak/lma-hindi-phase-3-finetuning",
+  "title": "LMA Hindi Phase 3 Finetuning",
+  "code_file": "main.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [],
+  "kernel_sources": [
+    "nilkantakarak/lma-hindi-phase-2-pretraining",
+    "nilkantakarak/lma-hindi-phase-1-data-and-tokenizer"
+  ]
+}

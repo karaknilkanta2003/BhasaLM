@@ -18,6 +18,10 @@ import torch
 import sentencepiece as spm
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+# Configure font support for Indic scripts (Devanagari and Assamese/Bengali)
+plt.rcParams['font.sans-serif'] = ['Nirmala UI', 'Segoe UI', 'Arial Unicode MS', 'DejaVu Sans']
+plt.rcParams['axes.unicode_minus'] = False
 from common.model import TransformerLM, ModelConfig
 from common.eval import (
     compute_bleu4,
@@ -155,6 +159,7 @@ def plot_attention_heatmaps(model, sp, sentence, lang_name, save_path):
     # Cap tokens for legible heatmap
     tokens = tokens[:16]
     token_ids = token_ids[:16]
+    clean_tokens = [t.replace("\u2581", "_") for t in tokens]
 
     inp = torch.tensor([token_ids], dtype=torch.long, device=device)
     with torch.no_grad():
@@ -173,8 +178,8 @@ def plot_attention_heatmaps(model, sp, sentence, lang_name, save_path):
     # Plot Layer 1 Head 0 (Early layer: Positional / Local)
     sns.heatmap(
         l1_h0,
-        xticklabels=tokens,
-        yticklabels=tokens,
+        xticklabels=clean_tokens,
+        yticklabels=clean_tokens,
         cmap="Blues",
         ax=axes[0],
         cbar_kws={"label": "Attention Weight"}
@@ -186,8 +191,8 @@ def plot_attention_heatmaps(model, sp, sentence, lang_name, save_path):
     # Plot Layer 6 Head 0 (Late layer: Semantic / Diffuse)
     sns.heatmap(
         l6_h0,
-        xticklabels=tokens,
-        yticklabels=tokens,
+        xticklabels=clean_tokens,
+        yticklabels=clean_tokens,
         cmap="Purples",
         ax=axes[1],
         cbar_kws={"label": "Attention Weight"}

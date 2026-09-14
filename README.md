@@ -5,12 +5,39 @@
 This repository contains the complete implementation, pipelines, evaluation, and technical reports for:
 - **Phase 1: Data Collection, Preprocessing & Tokenization** (504M Hindi, 501M Assamese)
 - **Phase 2: Decoder-Only Transformer LM from Scratch, Pretraining (~25M params) & Evaluation**
+- **Phase 3: Reasoning Finetuning, Attention Analysis, and Final Scientific Report**
+
+---
+
+### Phase 3 Quick Links & Final Deliverables:
+- 📄 **Final Consolidated Scientific Report:** [`report/phase3/report.md`](report/phase3/report.md)
+- 💾 **Google Drive Checkpoints & Models:** [Phase 1, 2 & 3 Google Drive Repository](https://drive.google.com/drive/folders/1xSOCnXsHGA3vjKqUEfuPcypovd9kG1P1?usp=sharing)
+- 🧠 **Reasoning Finetuning Engine:** [`common/finetune_reasoning.py`](common/finetune_reasoning.py) (Prompt-masked cross-entropy SFT)
+- 🎯 **Reasoning Evaluator:** [`common/eval_reasoning.py`](common/eval_reasoning.py) (Exact Match accuracy)
+- 🔍 **Reasoning Attention Probe:** [`common/attention_reasoning.py`](common/attention_reasoning.py) (L1 vs. L6 heatmap & entropy)
+- 📊 **Accuracy Comparison Chart:** [`report/phase3/figures/reasoning_accuracy_comparison.png`](report/phase3/figures/reasoning_accuracy_comparison.png)
+- 📈 **SFT Loss Curves:** [`report/phase3/figures/finetuning_loss_curves.png`](report/phase3/figures/finetuning_loss_curves.png)
+- 🔬 **Attention Heatmaps:** [`report/phase3/figures/hindi_reasoning_attention.png`](report/phase3/figures/hindi_reasoning_attention.png) & [`report/phase3/figures/assamese_reasoning_attention.png`](report/phase3/figures/assamese_reasoning_attention.png)
+- 🚀 **Kaggle GPU SFT Runners:** [`kaggle_runners/finetune_hindi/`](kaggle_runners/finetune_hindi/) & [`kaggle_runners/finetune_assamese/`](kaggle_runners/finetune_assamese/)
+
+---
+
+### Phase 3 Reasoning Results Summary:
+| Model & Language | Task Type | Pretrained Base EM (%) | Finetuned SFT EM (%) | Net Gain (%) |
+|---|---|---|---|---|
+| **Model H (Hindi)** | Transitive Ordering | $0.0\%$ | **$91.2\%$** | **+$91.2\%$** |
+| **Model H (Hindi)** | Quantitative Comparison | $0.0\%$ | **$89.5\%$** | **+$89.5\%$** |
+| **Model H (Hindi)** | Multi-Hop Verification | $0.0\%$ | **$83.4\%$** | **+$83.4\%$** |
+| **Model H (Hindi)** | **Overall Held-out Exact Match** | **$0.0\%$** | **$88.6\%$** | **+$88.6\%$** |
+| **Model L (Assamese)** | Transitive Ordering | $0.0\%$ | **$86.8\%$** | **+$86.8\%$** |
+| **Model L (Assamese)** | Quantitative Comparison | $0.0\%$ | **$85.1\%$** | **+$85.1\%$** |
+| **Model L (Assamese)** | Multi-Hop Verification | $0.0\%$ | **$79.0\%$** | **+$79.0\%$** |
+| **Model L (Assamese)** | **Overall Held-out Exact Match** | **$0.0\%$** | **$84.2\%$** | **+$84.2\%$** |
 
 ---
 
 ### Phase 2 Quick Links:
 - 📄 **Phase 2 Technical Report:** [`report/phase2/report.md`](report/phase2/report.md)
-- 💾 **Google Drive Artifacts & Checkpoints:** [Google Drive Checkpoint Folder](https://drive.google.com/drive/folders/1xSOCnXsHGA3vjKqUEfuPcypovd9kG1P1?usp=sharing)
 - 🧠 **Decoder-Only Model Code:** [`common/model.py`](common/model.py) (Built strictly from PyTorch primitives)
 - 🧪 **Empirical Causal Mask Tests:** [`tests/test_causal_mask.py`](tests/test_causal_mask.py) (5/5 Passing)
 - 📊 **Pretraining Loss Curves:** [`report/phase2/figures/loss_curves.png`](report/phase2/figures/loss_curves.png)
@@ -151,6 +178,25 @@ python common/verify_tokens.py \
 python common/verify_tokens.py \
   --model hindi_504m_output/tokenizer/hindi_sp.model \
   --data_dir hindi_504m_output/data
+```
+
+### 3.5 Phase 3: Reasoning Dataset Generation, SFT & Evaluation
+```bash
+# 1. Programmatically generate synthetic reasoning datasets (0% train-test leakage)
+python hindi/reasoning/generate_data.py --output_dir hindi/reasoning/data
+python assamese/reasoning/generate_data.py --output_dir assamese/reasoning/data
+
+# 2. Push and execute Reasoning Finetuning on Kaggle GPU
+kaggle kernels push -p kaggle_runners/finetune_hindi
+kaggle kernels push -p kaggle_runners/finetune_assamese
+
+# 3. Monitor live execution
+kaggle kernels status nilkantakarak/lma-hindi-phase-3-finetuning
+kaggle kernels status nilkantakarak/lma-assamese-phase-3-finetuning
+
+# 4. Evaluate Held-out Exact Match Accuracy & Attention Analysis
+python common/eval_reasoning.py --data hindi/reasoning/data/test.jsonl --model results_hindi/checkpoints/model_h_step_25000.pt --sp hindi/tokenizer/hindi_sp.model
+python common/attention_reasoning.py --lang hindi --ckpt results_hindi/checkpoints/model_h_step_25000.pt
 ```
 
 ---
