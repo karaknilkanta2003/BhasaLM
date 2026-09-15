@@ -218,3 +218,28 @@ python common/attention_reasoning.py --lang hindi --ckpt results_hindi/checkpoin
 | **Tokenizer Architecture** | SentencePiece BPE (16,000 Vocab) | SentencePiece BPE (16,000 Vocab) | **Trained from scratch** |
 | **Fertility (Subwords / Word)** | **1.334** | **1.612** | **Optimal subword compression** |
 | **Test UNK Rate** | **0.0%** (via byte-fallback) | **0.0%** (via byte-fallback) | **Zero out-of-vocabulary crashes** |
+
+### 4.2 Phase 2: Pretraining Dynamics & Perplexity (Pre-LN 27.2M Transformers)
+
+| Architecture / Metric | Hindi (Model H — High-Resource) | Assamese (Model L — Low-Resource) | Notes / Observations |
+|---|---|---|---|
+| **Parameters ($N$)** | **$27,238,400$ (~27.24M)** | **$27,238,400$ (~27.24M)** | $L=6, h=8, d_{model}=512, d_{ff}=2048$ |
+| **Weight Tying** | Input-Output Tied ($16000 \times 512$) | Input-Output Tied ($16000 \times 512$) | Saves 8.19M parameters, stabilizes logits |
+| **Pretraining Steps** | 25,000 Steps on Kaggle Tesla T4 | 25,000 Steps on Kaggle Tesla T4 | Batch size = 18,024 tokens/step (450M tokens) |
+| **Pretraining Loss (Final)** | **$3.364$** | **$3.681$** | Model H converged to lower loss |
+| **Validation Loss (Best)** | **$3.494$** | **$3.848$** | Cross-entropy on held-out validation split |
+| **Validation Perplexity ($\text{PPL}$)** | **$32.93$** | **$46.90$** | Assamese $+42.4\%$ higher due to agglutination |
+| **Bits Per Byte ($\text{BPB}$)** | **$1.53$** | **$1.68$** | Language-neutral normalized entropy |
+
+### 4.3 Phase 3: Programmatic Reasoning SFT (20,000 Synthetic Samples)
+
+| Evaluation Benchmark | Hindi (Model H) | Assamese (Model L) | Description / Methodology |
+|---|---|---|---|
+| **Synthetic Dataset Volume** | **20,000 Train / 1k Val / 1k Test** | **20,000 Train / 1k Val / 1k Test** | 0% entity name leakage ($\text{Train} \cap \text{Test} = \emptyset$) |
+| **Entity Pool Diversity** | 120 Train / 25 Val / 30 Test names | 100 Train / 25 Val / 30 Test names | Mitigates memorization & subword recency bias |
+| **Pretrained Base EM Accuracy** | **$2.0\%$** | **$0.0\%$** | Zero-shot failure before SFT |
+| **Transitive Ordering Accuracy** | **$64.2\%$** | **$48.0\%$** | Transitive chained relations ($A > B > C \implies A > C$) |
+| **Quantitative Comparisons** | **$61.5\%$** | **$45.8\%$** | Numerical order resolution (height, age, price) |
+| **Multi-Hop Verification** | **$52.0\%$** | **$40.0\%$** | Binary hypothesis validation |
+| **Overall Held-Out Accuracy** | **$60.0\%$** | **$45.0\%$** | Exact Match (EM) across all 3 archetypes |
+| **Downstream Reasoning Gain** | **+$58.0\%$** | **+$45.0\%$** | Substantial gain from 20k programmatic SFT |

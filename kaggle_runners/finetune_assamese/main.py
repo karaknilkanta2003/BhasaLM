@@ -214,14 +214,23 @@ TRAIN_NAMES = [
     "ৰাহুল", "ৰমেন", "বিকাশ", "প্ৰণৱ", "ভাস্কৰ", "মানস", "দীপাংকৰ", "মৃদুল", "অনুপম", "হেমন্ত",
     "কল্যাণ", "পংকজ", "ধ্ৰুৱ", "নয়ন", "জয়ন্ত", "হিৰণ্য", "উৎপল", "অৰূপ", "বিপুল", "সঞ্জীৱ",
     "ৰীতা", "গীতা", "ৰশ্মি", "জোনালী", "ৰূপালী", "মিতালী", "দীপালী", "বৰ্ণালী", "পল্লৱী", "মামনি",
-    "পূবালী", "অঞ্জলি", "কবিতা", "লখিমী", "ময়ূৰী", "প্ৰীতি", "মৃদুস্মিতা", "হিমানী", "চন্দনা", "সংগীতা"
+    "পূবালী", "অঞ্জলি", "কবিতা", "লখিমী", "ময়ূৰী", "প্ৰীতি", "মৃদুস্মিতা", "হিমানী", "চন্দনা", "সংগীতা",
+    "অৰবিন্দ", "জগদীশ", "গোপাল", "মাধৱ", "কেশৱ", "কমল", "বিজয়", "তৰুণ", "নিৰঞ্জন", "হৰেন",
+    "ভবেন", "খগেন", "প্ৰবীণ", "ৰাজেন", "যোগেন", "মহেন", "ধীৰেণ", "নৰেন", "গিৰীন", "সুৰেন",
+    "অণিমা", "পূৰ্ণিমা", "অঞ্জনা", "কল্পনা", "চেতনা", "বিনীতা", "ললিতা", "সুচিত্ৰা", "প্ৰতিভা", "মঞ্জুলা",
+    "সাবিত্ৰী", "দময়ন্তী", "কুন্তী", "গান্ধাৰী", "উৰ্মিলা", "অনুসূয়া", "বাসন্তী", "মালতী", "শেৱালী", "তগৰ",
+    "ৰক্তিম", "শান্তনু", "প্ৰসেনজিত", "শুভ্ৰাংশু", "পদ্মনাভ", "ৰূপম", "প্ৰশান্ত", "ত্ৰৈলোক্য", "কমলেশ", "জগত",
+    "অমৰেন্দ্ৰ", "দিব্যজ্যোতি", "ৰঞ্জন", "হিতেশ", "বিমল", "নলিনী", "প্ৰমোদ", "ভূপেন", "বিষ্ণু", "লক্ষ্মীনাথ"
 ]
 VAL_NAMES = [
-    "দেৱজিত", "অভিজিত", "পাৰ্থ", "সিদ্ধাৰ্থ", "কৌশিক", "প্ৰিয়ংকা", "টুনী", "ৰিমঝিম", "শিখা", "মৌচুমী"
+    "দেৱজিত", "অভিজিত", "পাৰ্থ", "সিদ্ধাৰ্থ", "কৌশিক", "প্ৰিয়ংকা", "টুনী", "ৰিমঝিম", "শিখা", "মৌচুমী",
+    "কংকন", "ধীৰাজ", "নীলম", "ৰাজদীপ", "অভিলাষ", "অনুষ্কা", "ধৃতি", "স্বস্তিকা", "স্নেহা", "তৃষ্ণা",
+    "ঋত্বিক", "অংকুৰ", "প্ৰণয়", "বৰষা", "মেঘালী"
 ]
 TEST_NAMES = [
     "অনিন্দ্য", "তন্ময়", "সৌৰভ", "হিমাংশু", "নৱজিত", "ঋতুপৰ্ণ", "প্ৰীতম", "চিৰঞ্জিত", "ভাস্বতী", "দেৱযানী",
-    "মধুস্মিতা", "পৰিস্মিতা", "কাকলি", "জ্যোতি", "নিবেদিতা"
+    "মধুস্মিতা", "পৰিস্মিতা", "কাকলি", "জ্যোতি", "নিবেদিতা", "কৌস্তুভ", "দিগন্ত", "চিন্ময়", "অৰ্ণৱ", "প্ৰাঞ্জল",
+    "শতাব্দী", "অভিনন্দন", "প্ৰিয়ম", "ৰক্তোৎপল", "কৌশিকী", "অন্বেষা", "প্ৰীতিস্মিতা", "মনীষা", "গাৰ্গী", "মৈত্ৰেয়ী"
 ]
 
 COMPARATIVE_DIMENSIONS = [
@@ -309,7 +318,7 @@ def create_synthetic_data(out_dir: str):
         rng.shuffle(res)
         return res
 
-    for split, names, n, seed in [("train", TRAIN_NAMES, 5000, 42), ("val", VAL_NAMES, 500, 43), ("test", TEST_NAMES, 500, 44)]:
+    for split, names, n, seed in [("train", TRAIN_NAMES, 20000, 42), ("val", VAL_NAMES, 1000, 43), ("test", TEST_NAMES, 1000, 44)]:
         fp = os.path.join(out_dir, f"{split}.jsonl")
         data = make_split(names, n, seed)
         with open(fp, "w", encoding="utf-8") as f:
@@ -461,13 +470,13 @@ def find_paths():
         ckpt_path = candidate_ckpts[-1]
         print(f"Selected latest checkpoint by step: {ckpt_path}")
 
-    if not (train_path and val_path and test_path):
-        data_dir = os.path.join(OUTPUT_DIR, "assamese_reasoning_data")
-        print(f"Reasoning dataset not found on disk. Generating programmatic dataset into {data_dir}...")
-        create_synthetic_data(data_dir)
-        train_path = os.path.join(data_dir, "train.jsonl")
-        val_path = os.path.join(data_dir, "val.jsonl")
-        test_path = os.path.join(data_dir, "test.jsonl")
+    # Always generate the 20,000 sample programmatic reasoning dataset with zero leakage
+    data_dir = os.path.join(OUTPUT_DIR, "assamese_reasoning_data")
+    print(f"Generating 20,000 sample programmatic reasoning dataset into {data_dir}...")
+    create_synthetic_data(data_dir)
+    train_path = os.path.join(data_dir, "train.jsonl")
+    val_path = os.path.join(data_dir, "val.jsonl")
+    test_path = os.path.join(data_dir, "test.jsonl")
 
     train_path = train_path or "assamese/reasoning/data/train.jsonl"
     val_path = val_path or "assamese/reasoning/data/val.jsonl"

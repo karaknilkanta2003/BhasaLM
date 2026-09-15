@@ -215,14 +215,25 @@ TRAIN_NAMES = [
     "अमित", "राहुल", "विकास", "रोहन", "सोहन", "अजय", "संजय", "मनीष", "दीपक", "नीरज",
     "प्रमोद", "विवेक", "सुमित", "गौरव", "आकाश", "कुणाल", "वरुण", "नितिन", "राजेश", "अशोक",
     "पूजा", "नेहा", "प्रिया", "अंजलि", "स्नेहा", "कविता", "रीता", "सुनीता", "मीना", "आरती",
-    "प्रीति", "दीपा", "सीमा", "रश्मि", "भावना", "किरण", "श्वेता", "पूनम", "मोनिका", "अंशुल"
+    "प्रीति", "दीपा", "सीमा", "रश्मि", "भावना", "किरण", "श्वेता", "पूनम", "मोनिका", "अंशुल",
+    "अनिल", "सुनील", "रमेश", "सुरेश", "महेश", "दिनेश", "मुकेश", "राकेश", "नरेश", "हरीश",
+    "कमल", "पवन", "अतुल", "आलोक", "कपिल", "विनोद", "मनोज", "प्रवीण", "राजीव", "संजीव",
+    "अल्पना", "साक्षी", "दीक्षा", "प्राची", "श्रुति", "अदित्या", "रूपाली", "शालिनी", "निशा", "ज्योति",
+    "प्रतिभा", "मंजू", "संगीता", "उर्मिला", "मधु", "सरिता", "कुसुम", "विद्या", "लता", "कमला",
+    "विशाल", "अभिषेक", "संदीप", "जितेंद्र", "धर्मेंद्र", "योगेश", "हेमराज", "भगवंत", "बलवंत", "कुलदीप",
+    "गुरदीप", "सतनाम", "हरप्रीत", "मनप्रीत", "गुरप्रीत", "जसप्रीत", "अमरजीत", "इंद्रजीत", "रणजीत", "सुरजीत",
+    "पारस", "अविनाश", "सौरभ", "मयूरेश", "दिग्विजय", "ऋत्विक", "समर्थ", "वेदांत", "शौर्य", "अथर्व",
+    "सारिका", "अनुराधा", "गायत्री", "कौशल्या", "देवकी", "यशोदा", "रुक्मिणी", "रोहिणी", "अनुसूया", "उषा"
 ]
 VAL_NAMES = [
-    "हर्ष", "कार्तिक", "मयंक", "तरुण", "पार्थ", "श्रेया", "तनु", "दिव्या", "रिया", "ईशा"
+    "हर्ष", "कार्तिक", "मयंक", "तरुण", "पार्थ", "श्रेया", "तनु", "दिव्या", "रिया", "ईशा",
+    "अर्नव", "विहान", "आरव", "अयान", "कबीर", "अनाया", "मायरा", "सान्वी", "इनाया", "कियारा",
+    "भव्य", "ध्रुव", "शशांक", "तन्वी", "अवनि"
 ]
 TEST_NAMES = [
     "अभिनव", "ऋषभ", "चेतन", "तुषार", "निखिल", "मयूर", "लोकेश", "वैभव", "सिद्धार्थ", "हेमंत",
-    "अदिति", "कृतिका", "तान्या", "पारुल", "मेघा"
+    "अदिति", "कृतिका", "तान्या", "पारुल", "मेघा", "ईशान", "देवांश", "युवराज", "प्रियांशु", "सूर्यांश",
+    "अवनीश", "तेजस", "अक्षत", "अथर्वेश", "अन्वेषा", "अक्षिता", "वैदेही", "दृष्टि", "सौम्या", "लावण्या"
 ]
 
 COMPARATIVE_DIMENSIONS = [
@@ -310,7 +321,7 @@ def create_synthetic_data(out_dir: str):
         rng.shuffle(res)
         return res
 
-    for split, names, n, seed in [("train", TRAIN_NAMES, 5000, 42), ("val", VAL_NAMES, 500, 43), ("test", TEST_NAMES, 500, 44)]:
+    for split, names, n, seed in [("train", TRAIN_NAMES, 20000, 42), ("val", VAL_NAMES, 1000, 43), ("test", TEST_NAMES, 1000, 44)]:
         fp = os.path.join(out_dir, f"{split}.jsonl")
         data = make_split(names, n, seed)
         with open(fp, "w", encoding="utf-8") as f:
@@ -463,14 +474,13 @@ def find_paths():
         ckpt_path = candidate_ckpts[-1]
         print(f"Selected latest checkpoint by step: {ckpt_path}")
 
-    # If dataset not found, generate it on the fly!
-    if not (train_path and val_path and test_path):
-        data_dir = os.path.join(OUTPUT_DIR, "hindi_reasoning_data")
-        print(f"Reasoning dataset not found on disk. Generating programmatic dataset into {data_dir}...")
-        create_synthetic_data(data_dir)
-        train_path = os.path.join(data_dir, "train.jsonl")
-        val_path = os.path.join(data_dir, "val.jsonl")
-        test_path = os.path.join(data_dir, "test.jsonl")
+    # Always generate the 20,000 sample programmatic reasoning dataset with zero leakage
+    data_dir = os.path.join(OUTPUT_DIR, "hindi_reasoning_data")
+    print(f"Generating 20,000 sample programmatic reasoning dataset into {data_dir}...")
+    create_synthetic_data(data_dir)
+    train_path = os.path.join(data_dir, "train.jsonl")
+    val_path = os.path.join(data_dir, "val.jsonl")
+    test_path = os.path.join(data_dir, "test.jsonl")
 
     # Fallbacks for local execution
     train_path = train_path or "hindi/reasoning/data/train.jsonl"
